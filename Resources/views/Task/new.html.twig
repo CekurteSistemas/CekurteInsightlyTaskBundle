@@ -1,0 +1,18 @@
+{% extends 'CekurteGeneratorBundle::layout.html.twig' %}
+
+{% set title    = 'Task'|trans %}
+{% set subtitle = 'Add'|trans %}
+
+{% block links -%}
+    {% embed 'CekurteGeneratorBundle:Action:list.html.twig' with {
+        'route' : 'admin_task'
+    } only %}
+    {% endembed %}
+{% endblock %}
+
+{% block content -%}
+    <form class="form-horizontal" role="form" action="{{ path('admin_task_create') }}" method="post" {{ form_enctype(form) }}>
+        {{ form_widget(form) }}
+        {% include 'CekurteGeneratorBundle:Action:form-actions.html.twig' %}
+    </form>
+{% endblock %}

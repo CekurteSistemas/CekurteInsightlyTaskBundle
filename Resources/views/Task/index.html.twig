@@ -1,0 +1,59 @@
+{% extends 'CekurteGeneratorBundle::layout.html.twig' %}
+
+{% set title    = 'Task'|trans %}
+{% set subtitle = 'List'|trans %}
+
+{% block search -%}
+    {% include 'CekurteInsightlyTaskBundle:Task:search.html.twig' %}
+{% endblock %}
+
+{% block links -%}
+    {% embed 'CekurteGeneratorBundle:Action:search.html.twig' only %}
+    {% endembed %}
+    {% embed 'CekurteGeneratorBundle:Action:create.html.twig' with {
+        'route': 'admin_task_new'
+    } only %}
+    {% endembed %}
+    {% if is_granted('ROLE_EXPORT') %}
+        {% embed 'CekurteGeneratorBundle:Action:export.html.twig' with {
+            'route': 'admin_task_export'
+        } only %}
+        {% endembed %}
+    {% endif %}
+{% endblock %}
+
+{% block links_footer -%}
+    {{ knp_pagination_render(pagination) }}
+{% endblock %}
+
+{% block content -%}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th{% if pagination.isSorted('ck.subject') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Subject'|trans, 'ck.subject', {'title' : 'Order by'|trans ~ ' ' ~ 'Subject'|trans}) }}</th>
+                    {% if cekurte_is_granted('RETRIEVE') or cekurte_is_granted('UPDATE') or cekurte_is_granted('DELETE') %}
+                        <th class="action">{{ 'Actions'|trans }}</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for entity in pagination %}
+                <tr>
+                    <td><a href="{{ path('admin_task_show', { 'id': entity.id }) }}">{{ entity.subject }}</a></td>
+                    {% if cekurte_is_granted('RETRIEVE') or cekurte_is_granted('UPDATE') or cekurte_is_granted('DELETE') %}
+                        <td>
+                            {% embed 'CekurteGeneratorBundle:Action:retrieve.html.twig' with {
+                                'route'             : 'admin_task_show',
+                                'identifierKey'     : 'id',
+                                'identifierValue'   : entity.id
+                            } only %}
+                            {% endembed  %}
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

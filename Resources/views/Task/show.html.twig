@@ -1,0 +1,36 @@
+{% extends 'CekurteGeneratorBundle::layout.html.twig' %}
+
+{% set title    = 'Task'|trans %}
+{% set subtitle = 'Details'|trans %}
+
+{% block links -%}
+    {% embed 'CekurteGeneratorBundle:Action:list.html.twig' with {
+        'route'      : 'admin_task'
+    } only %}
+    {% endembed %}
+    {% embed 'CekurteGeneratorBundle:Action:create.html.twig' with {
+        'route'      : 'admin_task_new',
+    } only %}
+    {% endembed %}
+{% endblock %}
+
+{% block content -%}
+    <div class="table-responsive">
+        <table class="table table-hover table-show">
+            <tbody>
+                <tr>
+                    <th>{{ 'Subject'|trans }}</th>
+                    <td>{{ entity.subject }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'Content'|trans }}</th>
+                    <td>{{ entity.content|raw }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'TASK_ID'|trans }}</th>
+                    <td>#{{ entity.insightlyTaskId }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
