@@ -161,7 +161,7 @@ class TaskController extends CekurteController implements RepositoryInterface
      *
      * @Route("/", name="admin_task_create")
      * @Method("POST")
-     * @Template("CekurteInsightTaskBundle:Task:new.html.twig")
+     * @Template("CekurteInsightlyTaskBundle:Task:new.html.twig")
      * @Secure(roles="ROLE_CEKURTEINSIGHTLYTASKBUNDLE_TASK_CREATE, ROLE_ADMIN")
      *
      * @param Request $request
@@ -181,7 +181,18 @@ class TaskController extends CekurteController implements RepositoryInterface
             $this->get('session')->getFlashBag()
         );
 
-        $handler->setInsightlyService($this->get('cekurte_insightly'));
+        $handler
+            ->setInsightlyService($this->get('cekurte_insightly'))
+            ->setInsightlyDefaultParameters(array(
+                'responsible_user_id'   => $this->container->getParameter('cekurte_insightly_task_responsible_user_id'),
+                'owner_user_id'         => $this->container->getParameter('cekurte_insightly_task_owner_user_id'),
+                'project_id'            => $this->container->getParameter('cekurte_insightly_task_project_id'),
+                'category_id'           => $this->container->getParameter('cekurte_insightly_task_category_id'),
+                'priority'              => $this->container->getParameter('cekurte_insightly_task_priority'),
+                'publicly_visible'      => $this->container->getParameter('cekurte_insightly_task_publicly_visible'),
+                'completed'             => $this->container->getParameter('cekurte_insightly_task_completed'),
+            ))
+        ;
 
         if ($id = $handler->save()) {
             return $this->redirect($this->generateUrl('admin_task_show', array('id' => $id)));

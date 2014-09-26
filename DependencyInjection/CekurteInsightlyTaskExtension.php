@@ -21,5 +21,13 @@ class CekurteInsightlyTaskExtension extends Extension
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
+
+        $container->setParameter('cekurte_insightly_task_responsible_user_id', $config['responsible_user_id']);
+        $container->setParameter('cekurte_insightly_task_owner_user_id', $config['owner_user_id']);
+        $container->setParameter('cekurte_insightly_task_project_id', $config['project_id']);
+        $container->setParameter('cekurte_insightly_task_category_id', $config['category_id']);
+        $container->setParameter('cekurte_insightly_task_priority', $config['priority']);
+        $container->setParameter('cekurte_insightly_task_publicly_visible', $config['publicly_visible']);
+        $container->setParameter('cekurte_insightly_task_completed', $config['completed']);
     }
 }

@@ -26,11 +26,54 @@
                     <th>{{ 'Content'|trans }}</th>
                     <td>{{ entity.content|raw }}</td>
                 </tr>
-                <tr>
-                    <th>{{ 'TASK_ID'|trans }}</th>
-                    <td>#{{ entity.insightlyTaskId }}</td>
-                </tr>
             </tbody>
         </table>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            {{ 'Ticket'|trans }}: #{{ entity.insightlyTaskId }}
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-show">
+                    <tbody>
+                        {% if entity.insightlyTaskDateCreated %}
+                            <tr>
+                                <th>{{ 'Created at'|trans }}</th>
+                                <td>{{ entity.insightlyTaskDateCreated|date('d/m/Y H:i:s') }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if entity.insightlyTaskDateUpdated %}
+                            <tr>
+                                <th>{{ 'Updated at'|trans }}</th>
+                                <td>{{ entity.insightlyTaskDateUpdated|date('d/m/Y H:i:s') }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if entity.insightlyTaskStatus %}
+                            <tr>
+                                <th>{{ 'Status'|trans }}</th>
+                                <td>{{ entity.insightlyTaskStatus }}</td>
+                            </tr>
+                        {% endif %}
+                        <tr>
+                            <th>{{ 'Completed'|trans }}</th>
+                            <td>
+                                {% embed 'CekurteGeneratorBundle:Action:boolean-field.html.twig' with {
+                                    'fieldValue': entity.insightlyTaskCompleted
+                                } only %}
+                                {% endembed %}
+                            </td>
+                        </tr>
+                        {% if entity.insightlyTaskPercentComplete >= 0 %}
+                            <tr>
+                                <th>{{ 'Percent complete'|trans }}</th>
+                                <td>{{ entity.insightlyTaskPercentComplete }}%</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 {% endblock %}

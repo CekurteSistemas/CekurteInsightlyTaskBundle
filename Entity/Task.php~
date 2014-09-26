@@ -43,58 +43,37 @@ class Task
     private $insightlyTaskId;
 
     /**
-     * Get id
+     * @var \DateTime
      *
-     * @return integer 
+     * @ORM\Column(name="insightly_task_date_created", type="datetime", nullable=true)
      */
-    public function getId()
-    {
-        return $this->id;
-    }
+    private $insightlyTaskDateCreated;
 
     /**
-     * Set subject
+     * @var \DateTime
      *
-     * @param string $subject
-     * @return Task
+     * @ORM\Column(name="insightly_task_date_updated", type="datetime", nullable=true)
      */
-    public function setSubject($subject)
-    {
-        $this->subject = $subject;
-
-        return $this;
-    }
+    private $insightlyTaskDateUpdated;
 
     /**
-     * Get subject
+     * @var boolean
      *
-     * @return string 
+     * @ORM\Column(name="insightly_task_completed", type="boolean", nullable=true)
      */
-    public function getSubject()
-    {
-        return $this->subject;
-    }
+    private $insightlyTaskCompleted;
 
     /**
-     * Set content
+     * @var string
      *
-     * @param string $content
-     * @return Task
+     * @ORM\Column(name="insightly_task_status", type="string", length=20, nullable=true)
      */
-    public function setContent($content)
-    {
-        $this->content = $content;
-
-        return $this;
-    }
+    private $insightlyTaskStatus;
 
     /**
-     * Get content
+     * @var integer
      *
-     * @return string 
+     * @ORM\Column(name="insightly_task_percent_complete", type="integer", nullable=true)
      */
-    public function getContent()
-    {
-        return $this->content;
-    }
+    private $insightlyTaskPercentComplete;
 }

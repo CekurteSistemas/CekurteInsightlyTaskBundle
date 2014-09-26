@@ -22,6 +22,11 @@ class TaskFormHandler extends CekurteFormHandler
     protected $insightlyService;
 
     /**
+     * @var array
+     */
+    protected $insightlyDefaultParameters;
+
+    /**
      * Set a instance of service Insightly
      *
      * @param \Insightly $insightlyService
@@ -46,6 +51,38 @@ class TaskFormHandler extends CekurteFormHandler
     }
 
     /**
+     * Set defaults params to insightly task service
+     *
+     * @param array $params
+     *
+     * @return TaskFormHandler
+     */
+    public function setInsightlyDefaultParameters(array $params = array())
+    {
+        $this->insightlyDefaultParameters = $params;
+
+        return $this;
+    }
+
+    /**
+     * Get a default parameter of insightly configuration
+     *
+     * @param string $parameter
+     *
+     * @return string
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function getInsightlyDefaultParameter($parameter)
+    {
+        if (!isset($this->insightlyDefaultParameters[$parameter])) {
+            throw new \InvalidArgumentException(sprintf('The parameter %s is not isset!', $parameter));
+        }
+
+        return $this->insightlyDefaultParameters[$parameter];
+    }
+
+    /**
      * @inheritdoc
      */
     public function save()
@@ -60,19 +97,23 @@ class TaskFormHandler extends CekurteFormHandler
 
                 $response = $this->getInsightlyService()->addTask(array(
                     'TITLE'                 => $data->getSubject(),
-                    'PRIORITY'              => 3,
-                    'PUBLICLY_VISIBLE'      => true,
-                    'COMPLETED'             => false,
-                    'RESPONSIBLE_USER_ID'   => 658773,
-                    'OWNER_USER_ID'         => 658773,
                     'DETAILS'               => $data->getContent(),
+                    'RESPONSIBLE_USER_ID'   => $this->getInsightlyDefaultParameter('responsible_user_id'),
+                    'OWNER_USER_ID'         => $this->getInsightlyDefaultParameter('owner_user_id'),
+                    'PROJECT_ID'            => $this->getInsightlyDefaultParameter('project_id'),
+                    'CATEGORY_ID'           => $this->getInsightlyDefaultParameter('category_id'),
+                    'PRIORITY'              => $this->getInsightlyDefaultParameter('priority'),
+                    'PUBLICLY_VISIBLE'      => $this->getInsightlyDefaultParameter('publicly_visible'),
+                    'COMPLETED'             => $this->getInsightlyDefaultParameter('completed'),
                 ));
 
                 if (!$response instanceof \stdClass) {
                     throw new \Exception('Ocorreu um erro ao abrir o chamado, por favor, tente mais tarde.');
                 }
 
-                $data->setInsightlyTaskId($response->TASK_ID);
+                $data
+                    ->setInsightlyTaskId($response->TASK_ID)
+                ;
 
                 $this->getManager()->persist($data);
                 $this->getManager()->flush();

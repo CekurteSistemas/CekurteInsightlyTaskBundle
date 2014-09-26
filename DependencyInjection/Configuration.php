@@ -20,9 +20,17 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('cekurte_insightly_task');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+        $rootNode
+            ->children()
+                ->integerNode('responsible_user_id')->isRequired()->cannotBeEmpty()->end()
+                ->integerNode('owner_user_id')->isRequired()->cannotBeEmpty()->end()
+                ->integerNode('project_id')->isRequired()->cannotBeEmpty()->end()
+                ->integerNode('category_id')->isRequired()->cannotBeEmpty()->end()
+                ->integerNode('priority')->isRequired()->cannotBeEmpty()->min(1)->max(3)->end()
+                ->booleanNode('publicly_visible')->isRequired()->end()
+                ->booleanNode('completed')->isRequired()->end()
+            ->end()
+        ;
 
         return $treeBuilder;
     }
