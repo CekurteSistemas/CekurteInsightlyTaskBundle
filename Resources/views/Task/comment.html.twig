@@ -3,7 +3,7 @@
 {% if entity.comments|length > 0 %}
     {% for item in entity.comments %}
         <div class="panel panel-{{ loop.index % 2 == 0 ? 'default' : 'info' }}">
-            <div class="panel-heading">{{ item.id }} ({{ item.createdAt|date('d/m/Y H:i:s') }})</div>
+            <div class="panel-heading">#{{ item.insightlyTaskCommentId }} ({{ item.createdAt|date('d/m/Y H:i:s') }})</div>
             <div class="panel-body">
                 {{ item.content|raw }}
             </div>
