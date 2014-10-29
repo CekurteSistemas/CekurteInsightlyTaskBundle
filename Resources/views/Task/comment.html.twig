@@ -1,0 +1,17 @@
+<h4>{{ 'Comments'|trans }}</h4>
+{#{% if entity.comments|length > 0 %}#}
+{% if entity.comments|length > 0 %}
+    {% for item in entity.comments %}
+        <div class="panel panel-{{ loop.index % 2 == 0 ? 'default' : 'info' }}">
+            <div class="panel-heading">{{ item.id }} ({{ item.createdAt|date('d/m/Y H:i:s') }})</div>
+            <div class="panel-body">
+                {{ item.content|raw }}
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-info" role="alert">
+        {{ 'No comments found'|trans }}
+    </div>
+{% endif %}
+<a class="btn btn-primary" href="#modalComment" data-toggle="modal"><span class="glyphicon glyphicon-comment"></span> {{ 'Add a new Comment'|trans }}</a>

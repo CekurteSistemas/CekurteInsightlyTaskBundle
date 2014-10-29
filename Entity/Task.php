@@ -78,6 +78,22 @@ class Task
     private $insightlyTaskPercentComplete;
 
     /**
+     * @var \Doctrine\Common\Collections\ArrayCollection
+     *
+     * @ORM\OrderBy({"createdAt" = "ASC"})
+     * @ORM\OneToMany(targetEntity="\Cekurte\InsightlyTaskBundle\Entity\Comment", mappedBy="task")
+     */
+    private $comments;
+    
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->comments = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
      * Get id
      *
      * @return integer
@@ -277,5 +293,39 @@ class Task
     public function getInsightlyTaskPercentComplete()
     {
         return $this->insightlyTaskPercentComplete;
+    }
+
+    /**
+     * Add comment
+     *
+     * @param \Cekurte\InsightlyTaskBundle\Entity\Comment $comment
+     *
+     * @return Task
+     */
+    public function addComment(\Cekurte\InsightlyTaskBundle\Entity\Comment $comment)
+    {
+        $this->comments[] = $comment;
+
+        return $this;
+    }
+
+    /**
+     * Remove comment
+     *
+     * @param \Cekurte\InsightlyTaskBundle\Entity\Comment $comment
+     */
+    public function removeComment(\Cekurte\InsightlyTaskBundle\Entity\Comment $comment)
+    {
+        $this->comments->removeElement($comment);
+    }
+
+    /**
+     * Get comments
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getComments()
+    {
+        return $this->comments;
     }
 }

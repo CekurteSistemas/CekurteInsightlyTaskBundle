@@ -4,6 +4,7 @@
 {% set subtitle = 'Details'|trans %}
 
 {% block links -%}
+    {% include 'CekurteInsightlyTaskBundle:Task:comment-modal.html.twig' %}
     {% embed 'CekurteGeneratorBundle:Action:list.html.twig' with {
         'route'      : 'admin_task'
     } only %}
@@ -74,6 +75,7 @@
                     </tbody>
                 </table>
             </div>
+            {% include 'CekurteInsightlyTaskBundle:Task:comment.html.twig' %}
         </div>
     </div>
 {% endblock %}

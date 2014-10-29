@@ -76,4 +76,13 @@ class Task
      * @ORM\Column(name="insightly_task_percent_complete", type="integer", nullable=true)
      */
     private $insightlyTaskPercentComplete;
+
+    /**
+     * @var \Doctrine\Common\Collections\ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="\Cekurte\InsightlyTaskBundle\Entity\Comment", mappedBy="task")
+     */
+    private $comments;
+
+    
 }

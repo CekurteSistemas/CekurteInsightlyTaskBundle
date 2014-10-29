@@ -1,0 +1,22 @@
+{% extends 'CekurteGeneratorBundle::modal.html.twig' %}
+
+{% block title -%}{{ 'Add a new Comment' | trans }}{% endblock %}
+
+{% block container_open %}<div class="modal fade" id="modalComment" tabindex="-1" role="dialog" aria-labelledby="modalCommentLabel" aria-hidden="true">{% endblock %}
+
+{% block form_open -%}
+    <form class="form-horizontal" role="form" action="{{ path('admin_task_create_comment', {'id': entity.id}) }}" method="post">
+{% endblock %}
+
+{% block content -%}
+    <div class="form-group">
+        <div class="col-lg-2">
+            <label for="comment" class="required">{{ 'Comment'|trans }}:</label>
+        </div>
+        <div class="col-lg-10">
+            <textarea name="comment" id="comment" class="ckeditor form-control"></textarea>
+        </div>
+    </div>
+{% endblock %}
+
+{% block action_submit_label %}{{ 'Save' | trans }}{% endblock %}

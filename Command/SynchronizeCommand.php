@@ -2,6 +2,7 @@
 
 namespace Cekurte\InsightlyTaskBundle\Command;
 
+use Cekurte\InsightlyTaskBundle\Entity\Comment;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -90,11 +91,62 @@ class SynchronizeCommand extends ContainerAwareCommand
                     $output->writeln('Saving task information on database ...');
 
                     $doctrine->getManager()->persist($task);
+
+                    $output->writeln(sprintf('Getting comments information to task %s ...', $task->getSubject()));
+
+                    $response = $this->getInsightlyService()->getTaskComments($task->getInsightlyTaskId());
+
+                    if (count($response) === 0) {
+                        $output->writeln('This task no have comments');
+                    }
+
+                    $taskComments = $task->getComments();
+
+                    foreach ($response as $comment) {
+
+                        $newComment = true;
+
+                        foreach ($taskComments as $taskComment) {
+                            if ($taskComment->getInsightlyTaskCommentId() == $comment->COMMENT_ID) {
+
+                                $newComment = false;
+
+                                $taskComment->setContent($comment->BODY);
+
+                                $output->writeln(sprintf('Updating comment #%s on database ...', $comment->COMMENT_ID));
+
+                                $doctrine->getManager()->persist($taskComment);
+                            }
+                        }
+
+                        if ($newComment === true) {
+
+                            $createdAt = \DateTime::createFromFormat('Y-m-d H:i:s', $comment->DATE_CREATED_UTC, new \DateTimeZone('UTC'));
+
+                            $commentEntity = new Comment();
+
+                            $commentEntity
+                                ->setInsightlyTaskCommentId($comment->COMMENT_ID)
+                                ->setCreatedAt($createdAt->setTimezone(new \DateTimeZone('America/Sao_Paulo')))
+                                ->setContent($comment->BODY)
+                                ->setTask($task)
+                            ;
+
+                            $output->writeln(sprintf('Saving comment #%s on database ...', $comment->COMMENT_ID));
+
+                            $doctrine->getManager()->persist($commentEntity);
+                        }
+                    }
+
+                    $output->writeln('Applying information on database ...');
+
                     $doctrine->getManager()->flush();
 
                     $doctrine->getConnection()->commit();
 
                 } catch (\Exception $e) {
+
+                    $output->writeln('Restoring database information ...');
 
                     $doctrine->getConnection()->rollback();
 

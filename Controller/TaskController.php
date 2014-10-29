@@ -2,6 +2,7 @@
 
 namespace Cekurte\InsightlyTaskBundle\Controller;
 
+use Cekurte\InsightlyTaskBundle\Entity\Comment;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -18,6 +19,7 @@ use Cekurte\InsightlyTaskBundle\Entity\Task;
 use Cekurte\InsightlyTaskBundle\Entity\Repository\TaskRepository;
 use Cekurte\InsightlyTaskBundle\Form\Type\TaskFormType;
 use Cekurte\InsightlyTaskBundle\Form\Handler\TaskFormHandler;
+use Symfony\Component\Validator\Exception\InvalidArgumentException;
 
 /**
  * Task controller.
@@ -154,6 +156,80 @@ class TaskController extends CekurteController implements RepositoryInterface
         ;
 
         return $office->createResponse();
+    }
+
+    /**
+     * Creates a new Comment entity.
+     *
+     * @Route("/{id}/comment", name="admin_task_create_comment")
+     * @Method("POST")
+     * @Secure(roles="ROLE_CEKURTEINSIGHTLYTASKBUNDLE_TASK_CREATE, ROLE_ADMIN")
+     *
+     * @param Request $request
+     * @param int $id
+     * @return RedirectResponse
+     *
+     * @author João Paulo Cercal <sistemas@cekurte.com>
+     * @version 0.1
+     */
+    public function createCommentAction(Request $request, $id)
+    {
+        $entity = $this->getEntityRepository()->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Task entity.');
+        }
+
+        try {
+
+            $insightly = $this->get('cekurte_insightly');
+
+            $commentStr = trim($request->get('comment', ''));
+
+            if (empty($commentStr)) {
+                throw new InvalidArgumentException('The comment cannot be empty');
+            }
+
+            $comment                    = new \stdClass();
+            $comment->BODY              = $commentStr;
+            $comment->OWNER_USER_ID     = $this->container->getParameter('cekurte_insightly_task_responsible_user_id');
+
+            $response = $insightly->addTaskComment($entity->getInsightlyTaskId(), $comment);
+
+            if (!$response instanceof \stdClass) {
+                throw new \Exception('The comment cannot be save on API.');
+            }
+
+            $createdAt = \DateTime::createFromFormat('Y-m-d H:i:s', $response->DATE_CREATED_UTC, new \DateTimeZone('UTC'));
+
+            $comment = new Comment();
+
+            $comment
+                ->setInsightlyTaskCommentId($response->COMMENT_ID)
+                ->setCreatedAt($createdAt->setTimezone(new \DateTimeZone('America/Sao_Paulo')))
+                ->setContent($commentStr)
+                ->setTask($entity)
+            ;
+
+            $this->getDoctrine()->getManager()->persist($comment);
+            $this->getDoctrine()->getManager()->flush();
+
+            $this->get('session')->getFlashBag()->add('message', array(
+                'type'      => 'success',
+                'message'   => 'The comment was created with successfully',
+            ));
+
+        } catch (\Exception $e) {
+
+            $this->get('session')->getFlashBag()->add('message', array(
+                'type'      => 'error',
+                'message'   => $e->getMessage(),
+            ));
+        }
+
+        return $this->redirect($this->generateUrl('admin_task_show', array(
+            'id' => $id,
+        )));
     }
 
     /**
