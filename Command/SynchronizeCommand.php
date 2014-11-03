@@ -57,7 +57,7 @@ class SynchronizeCommand extends ContainerAwareCommand
 
         $tasks = $doctrine->getManager()->getRepository('CekurteInsightlyTaskBundle:Task')->findAll();
 
-        $output->writeln('Starting ...');
+        $output->writeln(sprintf('Starting (%s) ...', date('Y-m-d H:i:s')));
 
         if (!empty($tasks)) {
 
